@@ -1,0 +1,11 @@
+{
+  "name": "fnc-zapasnici",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fight Night Challenge – záznamy zápasníkov",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@upstash/redis": "1.40.0"
+  }
+}

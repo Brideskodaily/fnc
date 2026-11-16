@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FNC Zápasníci</title>
+<link rel="icon" type="image/png" href="assets/fnc-logo-white.png">
+<link rel="preload" href="fonts/us-900.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"United Sans";src:url("fonts/us-300.woff2") format("woff2");font-weight:300;font-display:swap}
+@font-face{font-family:"United Sans";src:url("fonts/us-500.woff2") format("woff2");font-weight:400 500;font-display:swap}
+@font-face{font-family:"United Sans";src:url("fonts/us-700.woff2") format("woff2");font-weight:600 700;font-display:swap}
+@font-face{font-family:"United Sans";src:url("fonts/us-800.woff2") format("woff2");font-weight:800;font-display:swap}
+@font-face{font-family:"United Sans";src:url("fonts/us-900.woff2") format("woff2");font-weight:900;font-display:swap}
+:root{
+  /* Layout: fnc.live look — near-black canvas, black nav bar, square dark panels, gold actions, white name plates; three brand-glow cards for highlights */
+  --bg:#1d1d1d;
+  --bar:#0b0b0b;
+  --panel:#252525;
+  --panel-2:#2e2e2e;
+  --deep:#171717;
+  --ink:#ffffff;
+  --muted:#868998;
+  --line:rgba(255,255,255,.08);
+  --gold:#ceb976;
+  --gold-ink:#1d1d1d;
+  --win:#38c95b;
+  --loss:#ff4b3a;
+  --draw:#f3f3f3;
+  --pend:#6d6f78;
+  --f:"United Sans", "Eurostile", "Arial Narrow", system-ui, sans-serif;
+  --r:2px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-weight:500;-webkit-font-smoothing:antialiased}
+body{min-height:100%;background:radial-gradient(55% 38% at 50% 0%, rgba(206,120,40,.12), transparent 70%), var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.num{font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.caps{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700}
+
+/* nav bar */
+.bar{position:sticky;top:0;z-index:15;background:var(--bar);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1240px;margin:0 auto;height:66px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{height:32px;width:auto;display:block}
+.nav{display:flex;align-items:center;gap:28px}
+.nav button.lnk-nav{text-transform:uppercase;letter-spacing:.16em;font-size:13px;font-weight:700;color:#cfcfcf;padding:8px 0;border-bottom:2px solid transparent}
+.nav button.lnk-nav.on{color:#fff;border-color:var(--gold)}
+.btn-gold{height:42px;padding:0 22px;background:var(--gold);color:var(--gold-ink);text-transform:uppercase;letter-spacing:.12em;font-size:13px;font-weight:800;display:inline-flex;align-items:center;gap:8px;border-radius:var(--r);transition:filter .2s}
+.btn-gold:hover{filter:brightness(1.08)}
+.btn-gold svg{width:15px;height:15px}
+
+.shell{max-width:1240px;margin:0 auto;padding:34px 28px 90px;display:flex;flex-direction:column;gap:22px}
+
+/* title row */
+.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.title-row h1{margin:0;font-size:clamp(40px,6vw,64px);font-weight:900;text-transform:uppercase;letter-spacing:-.02em;line-height:.9}
+.title-row h1 small{display:block;font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--gold);margin-bottom:18px}
+.stats{display:flex;gap:clamp(18px,3vw,40px);flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.stat .n{font-size:40px;line-height:.9;color:#fff}
+.tag{display:inline-block;background:#000;color:#fff;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:4px 7px 3px;white-space:nowrap}
+.stat.hl .tag{background:var(--gold);color:var(--gold-ink)}
+.stat:not(.hl) .n{color:#d8d8d8}
+
+/* overview */
+.overview{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.panel{background:var(--panel);border-radius:var(--r);border:1px solid var(--line)}
+.timeline-card{padding:22px 24px 18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.card-head h3{margin:0;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:-.005em}
+.card-head p{margin:4px 0 0;font-size:13px;color:var(--muted);font-weight:500}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.track{overflow-x:auto;background:var(--deep);padding:16px 16px 10px;border-radius:var(--r)}
+.track-inner{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(46px,1fr);gap:6px;align-items:end;min-width:520px}
+.tcol{display:flex;flex-direction:column;align-items:center;gap:9px;padding:6px 0;border-radius:var(--r);transition:background .2s}
+.tcol:hover{background:rgba(255,255,255,.05)}
+.tcol .stack{display:flex;flex-direction:column-reverse;gap:4px;align-items:center;min-height:116px}
+.tcol .lbl{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em}
+.tcol.is-latest .lbl{color:var(--gold)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.dot.w{background:var(--win);box-shadow:0 0 8px rgba(56,201,91,.45)}
+.dot.l{background:var(--loss);box-shadow:0 0 8px rgba(255,75,58,.4)}
+.dot.d{background:var(--draw)}
+.dot.p{background:transparent;box-shadow:0 0 0 1.5px var(--pend) inset}
+.dot.e{width:4px;height:4px;background:rgba(255,255,255,.14);box-shadow:none}
+
+/* pending (gold) */
+.pending{position:relative;overflow:hidden;border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:10px;min-height:250px;border:1px solid}
+.pending .logo-w{position:absolute;top:24px;right:20px;height:20px;opacity:.35}
+.pending h3{margin:0;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;max-width:60%}
+.pending .big{font-size:72px;line-height:.85;margin-top:10px}
+.pending .big small{font-size:13px;font-weight:700;margin-left:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pend-list{list-style:none;margin:auto 0 0;padding:0;display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+.pend-list li{background:var(--deep);color:#fff;padding:10px 12px;font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:center;border-radius:var(--r);border:1px dashed rgba(255,255,255,.14)}
+.pend-list li button{font-weight:800;text-transform:uppercase}
+.pend-list .ev{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.08em;white-space:nowrap}
+.pending .empty{font-size:14px;margin-top:auto;font-weight:500;color:#b9bac2}
+.pending>*{position:relative;z-index:1}
+
+/* highlight cards */
+.highlights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.gcard{position:relative;overflow:hidden;border-radius:var(--r);padding:22px 24px;min-height:240px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;border:1px solid var(--line)}
+.gcard::after,.dr-hero::after,.pending::after{content:"";position:absolute;inset:0;background-image:var(--grain);mix-blend-mode:overlay;opacity:.22;pointer-events:none}
+.gcard>*,.dr-hero>*{position:relative;z-index:1}
+.gcard .lab{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.14em}
+.gcard .big{font-size:clamp(54px,6vw,76px);line-height:.9;margin-top:auto}
+.gcard .sub{font-size:13px;font-weight:500;color:#b9bac2}
+.plate{display:inline-flex;flex-direction:column;align-items:center}
+.plate .tag{margin-bottom:-1px}
+.plate .box{background:#fff;color:#111;font-weight:900;text-transform:uppercase;font-size:20px;line-height:1;padding:7px 10px 5px;letter-spacing:-.005em}
+button.plate:hover .box{background:var(--gold)}
+/* semantic tints: dark panel + glow in the colour of what the card says */
+.t-gold{--c:206,185,118}
+.t-win{--c:56,201,91}
+.t-loss{--c:255,75,58}
+.t-neutral{--c:190,192,200}
+.tint{color:#fff;border-color:rgba(var(--c),.22);
+  background:radial-gradient(65% 75% at 50% 62%, rgba(var(--c),.26) 0%, rgba(var(--c),.08) 42%, rgba(var(--c),0) 75%), var(--panel)}
+.tint::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:rgb(var(--c))}
+.tint .lab{color:rgb(var(--c))}
+.tint .ruler{background:repeating-linear-gradient(90deg, rgba(var(--c),.55) 0 1.5px, transparent 1.5px 10px)}
+.tint .ruler i{background:rgb(var(--c));box-shadow:0 0 10px rgba(var(--c),.7)}
+.chips-row .r{color:var(--win);margin-left:6px}
+.ruler{position:relative;width:100%;height:28px;margin-top:10px;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.5) 0 1.5px, transparent 1.5px 10px);
+  -webkit-mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
+.ruler i{position:absolute;bottom:0;width:3px;height:38px;background:#fff;transform:translateX(-50%)}
+.chips-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px}
+.chips-row>button,.chips-row>span{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:6px 9px 5px;background:#141414;color:#fff;border:1px solid var(--line);border-radius:var(--r)}
+.chips-row>button:hover{border-color:rgb(var(--c,255,255,255))}
+
+/* roster */
+.toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:8px}
+.toolbar h2{margin:0;font-size:34px;font-weight:900;text-transform:uppercase;letter-spacing:-.01em;line-height:1}
+.toolbar h2 small{display:block;font-size:13px;color:var(--muted);letter-spacing:0;margin-top:6px;font-weight:500;text-transform:none}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.search{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;background:var(--panel);border:1px solid var(--line);min-width:240px;border-radius:var(--r)}
+.search:focus-within{border-color:var(--gold)}
+.search svg{width:16px;height:16px;color:var(--muted)}
+.search input{border:0;outline:0;background:transparent;width:100%;font-size:14px}
+.search input::placeholder{color:var(--muted)}
+.seg{display:flex;gap:18px}
+.seg button{height:42px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);border-bottom:2px solid transparent}
+.seg button.on{color:#fff;border-color:var(--gold)}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:18px}
+.fcard{position:relative;text-align:left;padding:18px 18px 16px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s, transform .2s;min-height:160px;overflow:hidden}
+.fcard::before{content:"";position:absolute;width:220px;height:220px;right:-90px;top:-110px;background:radial-gradient(circle, var(--glow,rgba(206,185,118,.0)) 0%, transparent 65%);pointer-events:none}
+.fcard:hover{border-color:var(--gold);transform:translateY(-2px)}
+.fc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.fc-top .plate{align-items:flex-start}
+.fc-top .plate .box{font-size:21px;overflow-wrap:anywhere}
+.rec{font-size:30px;line-height:.9;white-space:nowrap;text-align:right}
+.rec small{display:block;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-top:4px}
+.rec.hot{color:var(--gold)}
+.strip{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:2px;align-items:center;padding:10px 8px;background:var(--deep);border-radius:var(--r)}
+.slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:14px}
+.slot .dot{width:8px;height:8px}
+.slot .dot.e{width:3px;height:3px}
+.fc-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);gap:8px}
+.bar-r{display:flex;height:3px;overflow:hidden;background:rgba(255,255,255,.08);margin-top:-6px}
+.bar-r i{display:block;height:100%}
+.bar-r .bw{background:var(--win)} .bar-r .bl{background:var(--loss)} .bar-r .bd{background:#9a9a9a}
+.empty-state{grid-column:1/-1;padding:46px 20px;text-align:center;color:var(--muted);font-size:14px}
+
+/* events */
+.events{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.ecard{padding:18px 18px 14px;display:flex;flex-direction:column;gap:12px}
+.ecard header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ecard header .num{font-size:30px;line-height:1;text-transform:uppercase}
+.ecard header span:last-child{font-size:12px;color:var(--muted)}
+.bouts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.bout{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:10px 12px;background:var(--deep);font-size:14px;border-radius:var(--r)}
+.bout .side{display:flex;align-items:center;gap:7px;min-width:0}
+.bout .side.r{justify-content:flex-end;text-align:right}
+.bout .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.45;padding-top:2px;text-transform:uppercase;font-weight:700;font-size:13px;letter-spacing:.02em}
+.bout .win{font-weight:900;color:#fff}
+.bout .lose{color:#bdbdbd}
+.bout .ext{color:var(--muted);font-weight:500}
+.bout .vs{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:800}
+.bout .note{grid-column:1/-1;font-size:11px;color:var(--muted);margin-top:-2px}
+button.lnk{text-align:inherit}
+button.lnk:hover{color:var(--gold)}
+
+/* drawer */
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
+#scrim.on{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(500px,100%);background:#141414;border-left:1px solid var(--line);z-index:21;transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;overflow:hidden}
+#drawer.on{transform:none}
+.dr-scroll{overflow-y:auto;padding:24px 24px 30px;display:flex;flex-direction:column;gap:16px}
+.dr-scroll>*{flex:none}
+.dr-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.dr-head .plate{align-items:flex-start}
+.dr-head .plate .box{font-size:clamp(30px,6vw,40px);padding:9px 12px 6px;overflow-wrap:anywhere}
+.aliases{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.aliases span{font-size:11px;padding:4px 8px 3px;background:var(--panel-2);color:#cfcfcf;text-transform:uppercase;letter-spacing:.06em}
+.x-btn{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:var(--r);flex:none}
+.x-btn:hover{border-color:var(--gold);color:var(--gold)}
+.x-btn svg{width:18px;height:18px}
+.dr-hero{position:relative;overflow:hidden;padding:20px 22px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;border-radius:var(--r)}
+.dr-hero .lab{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.16em}
+.dr-hero .big{font-size:76px;line-height:.9;margin:10px 0 4px}
+.dr-hero .sub{font-size:13px;color:#b9bac2}
+.minis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mini{background:var(--panel);padding:12px 12px 10px;display:flex;flex-direction:column;gap:8px;border-radius:var(--r)}
+.mini span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+.mini b{font-weight:900;font-size:24px;line-height:.9;white-space:nowrap}
+.sec{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:4px}
+.sec h3{margin:0;font-size:22px;font-weight:900;text-transform:uppercase}
+.btn-line{height:38px;padding:0 14px;border:1px solid rgba(255,255,255,.25);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;display:inline-flex;align-items:center;gap:6px;border-radius:var(--r)}
+.btn-line:hover{border-color:#fff}
+.btn-line.danger{color:var(--loss);border-color:rgba(255,75,58,.4)}
+.btn-line.danger.armed{background:var(--loss);border-color:var(--loss);color:#fff}
+.btn-line svg,.btn-gold.sm svg{width:14px;height:14px}
+.btn-gold.sm{height:38px;padding:0 14px;font-size:12px}
+.fights{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fight{display:grid;grid-template-columns:58px 1fr auto auto;gap:10px;align-items:center;background:var(--panel);padding:10px 8px 10px 14px;position:relative;border-radius:var(--r)}
+.fight::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.fight.r-w::before{background:var(--win)} .fight.r-l::before{background:var(--loss)} .fight.r-d::before{background:var(--draw)} .fight.r-p::before{background:var(--pend)}
+.fnc{display:flex;flex-direction:column;line-height:1}
+.fnc small{font-size:10px;color:var(--gold);letter-spacing:.14em;font-weight:800}
+.fnc b{font-weight:900;font-size:28px}
+.opp{min-width:0;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+.opp .nm{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.45;padding-top:2px}
+.opp em{display:block;font-style:normal;font-size:11px;color:var(--muted);font-weight:500;margin-top:3px;text-transform:none;letter-spacing:0}
+.opp .rk{font-size:12px;color:var(--muted);margin-left:6px;font-weight:700}
+.res{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:5px 8px 4px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border-radius:var(--r)}
+.res.w{background:rgba(56,201,91,.14);color:#6fe28c}
+.res.l{background:rgba(255,75,58,.14);color:#ff8576}
+.res.d{background:rgba(255,255,255,.1);color:#eee}
+.res.p{background:rgba(255,255,255,.06);color:var(--muted)}
+.row-act{display:flex;gap:2px}
+.row-act button{width:32px;height:32px;display:grid;place-items:center;color:var(--muted);border-radius:var(--r)}
+.row-act button:hover{background:var(--panel-2);color:#fff}
+.row-act button.armed{background:var(--loss);color:#fff}
+.row-act svg{width:15px;height:15px}
+.dr-foot{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:6px;padding-top:16px}
+
+/* form */
+.fform{background:var(--panel);padding:16px;display:flex;flex-direction:column;gap:12px;border:1px solid var(--gold);border-radius:var(--r)}
+.frow{display:grid;grid-template-columns:96px 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.field .flabel{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+.field input{height:44px;border:1px solid var(--line);background:var(--deep);padding:0 12px;font-size:15px;outline:0;width:100%;border-radius:var(--r)}
+.field input:focus{border-color:var(--gold)}
+.resseg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.resseg input{position:absolute;opacity:0;pointer-events:none}
+.resseg label{height:42px;background:var(--deep);display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#bdbdbd;cursor:pointer;border:1px solid var(--line);border-radius:var(--r)}
+.resseg input:checked+label{border-color:#fff;color:#fff;background:#000}
+.resseg input:focus-visible+label{outline:2px solid var(--gold);outline-offset:2px}
+.factions{display:flex;justify-content:flex-end;gap:8px}
+
+/* modal + toast + notice */
+#modal{position:fixed;inset:0;display:none;place-items:center;z-index:40;background:rgba(0,0,0,.6);padding:16px}
+#modal.on{display:grid}
+.mbox{width:min(440px,100%);background:#141414;border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:14px}
+.mbox h3{margin:0;font-size:26px;font-weight:900;text-transform:uppercase}
+.mbox p{margin:-6px 0 0;font-size:13px;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:var(--gold);color:var(--gold-ink);padding:12px 18px;font-size:13px;font-weight:700;z-index:50;transition:all .25s;pointer-events:none;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.notice{background:var(--panel);border-left:3px solid var(--pend);padding:12px 16px;font-size:13px;display:flex;gap:10px;align-items:center}
+.notice:empty{display:none}
+.notice.warn{border-color:var(--gold)}
+.skel{color:#555}
+
+@media (max-width:980px){
+  .overview{grid-template-columns:1fr}
+  .highlights{grid-template-columns:1fr 1fr}
+  .highlights .gcard:last-child{grid-column:1/-1}
+}
+@media (max-width:680px){
+  .bar-in{padding:0 16px;height:58px}
+  .logo{height:24px}
+  .nav{gap:16px}
+  .btn-gold span{display:none}
+  .btn-gold{padding:0 13px}
+  .shell{padding:22px 16px 60px}
+  .highlights{grid-template-columns:1fr}
+  .search{min-width:0;flex:1}
+  .tools{width:100%}
+  .minis{grid-template-columns:repeat(2,1fr)}
+  .frow{grid-template-columns:80px 1fr}
+  .fight{grid-template-columns:50px 1fr auto}
+  .fight .row-act{grid-column:2/-1;justify-content:flex-end;margin-top:-6px}
+}
+@media (max-width:420px){ .nav button.lnk-nav{font-size:11px;letter-spacing:.1em} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <img class="logo" src="assets/fnc-logo-white.png" alt="FNC Fight Night Challenge">
+    <nav class="nav" aria-label="Zobrazenie">
+      <button class="lnk-nav on" type="button" data-act="view" data-view="roster" id="tab-roster">Zápasníci</button>
+      <button class="lnk-nav" type="button" data-act="view" data-view="events" id="tab-events">Turnaje</button>
+      <button class="lnk-nav" type="button" data-act="auth" id="auth-btn" hidden>Prihlásiť</button>
+      <button class="btn-gold" id="add-fighter" type="button" data-act="add-fighter" aria-label="Nový zápasník">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M12 5v14M5 12h14"/></svg><span>Nový zápasník</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="title-row">
+    <h1 id="page-title"><small>Fight Night Challenge · záznamy</small>Zápasníci</h1>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="notice" id="notice"></div>
+
+  <section class="overview">
+    <div class="panel timeline-card">
+      <div class="card-head">
+        <div><h3>Výsledky podľa turnajov</h3><p>Každá bodka je jeden zapísaný zápas. Klikni na turnaj pre detail.</p></div>
+        <div class="legend"><span><i class="dot w"></i>Výhra</span><span><i class="dot l"></i>Prehra</span><span><i class="dot d"></i>Remíza</span><span><i class="dot p"></i>Bez výsledku</span></div>
+      </div>
+      <div class="track"><div class="track-inner" id="timeline"></div></div>
+    </div>
+  </section>
+
+  <section class="highlights" id="highlights"></section>
+
+  <section id="roster-view">
+    <div class="toolbar">
+      <h2>Roster<small id="roster-count"></small></h2>
+      <div class="tools">
+        <label class="search" for="q">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Hľadať zápasníka alebo súpera" autocomplete="off">
+        </label>
+        <div class="seg" role="group" aria-label="Zoradiť">
+          <button type="button" data-act="sort" data-sort="record" class="on">Bilancia</button>
+          <button type="button" data-act="sort" data-sort="pct">Úspešnosť</button>
+          <button type="button" data-act="sort" data-sort="count">Zápasy</button>
+          <button type="button" data-act="sort" data-sort="name">A–Z</button>
+        </div>
+      </div>
+    </div>
+    <div class="roster" id="roster"></div>
+  </section>
+
+  <section id="events-view" hidden>
+    <div class="events" id="events"></div>
+  </section>
+</div>
+
+<div id="scrim" data-act="close"></div>
+<aside id="drawer" aria-hidden="true" aria-label="Detail zápasníka"></aside>
+<div id="modal" role="dialog" aria-modal="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+const LOGO_WHITE=document.querySelector(".logo").src;
+const $ = (s,r=document)=>r.querySelector(s);
+const RES = {W:{label:"Výhra",c:"w"},L:{label:"Prehra",c:"l"},D:{label:"Remíza",c:"d"},P:{label:"Bez výsledku",c:"p"}};
+const INV = {W:"L",L:"W",D:"D",P:"P"};
+const ICON = {
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M12 5v14M5 12h14"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+
+const state = {fighters:[], loaded:false, slow:false, err:null, dbOk:null, canWrite:false, editable:false, offline:false,
+  view:"roster", q:"", sort:"record", openId:null, form:null, armed:null, lastDrawerSig:""};
+const chains = new Map();
+const API = "/api/fighters";
+let adminKey = (()=>{try{return localStorage.getItem("fnc_admin_key")||"";}catch(e){return "";}})();
+function setKey(k){adminKey=k; try{ if(k) localStorage.setItem("fnc_admin_key",k); else localStorage.removeItem("fnc_admin_key"); }catch(e){} }
+async function api(method,body,query){
+  const r=await fetch(API+(query||""),{method,cache:"no-store",headers:{"content-type":"application/json","x-admin-key":adminKey},body:body?JSON.stringify(body):undefined});
+  let j=null; try{ j=await r.json(); }catch(e){}
+  if(!r.ok){ const err=new Error((j&&j.error)||("HTTP "+r.status)); err.status=r.status; throw err; }
+  return j;
+}
+function setFighters(list){
+  state.fighters=(list||[]).filter(d=>d&&d.id).map(d=>sanitize(String(d.id),d)).sort((a,b)=>a.order-b.order||a.name.localeCompare(b.name,"sk"));
+}
+function docOf(f){return {id:f.id,name:f.name,order:f.order,aliases:f.aliases||[],fights:f.fights||[],createdAt:f.createdAt||Date.now()};}
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function norm(s){return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\s+/g," ").trim();}
+function slug(s){return norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"zapasnik";}
+function rid(){return Math.random().toString(36).slice(2,9);}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("on"),2600);}
+function pctTxt(p){return Math.round(p*100)+" %";}
+function plural(n,a,b,c){return n===1?a:(n>1&&n<5?b:c);}
+function sanitize(id,d){
+  d=d||{};
+  const fights=Array.isArray(d.fights)?d.fights.filter(x=>x&&typeof x==="object").map(x=>({
+    id:String(x.id||rid()), event:Math.max(1,parseInt(x.event,10)||1), opponent:String(x.opponent||"").slice(0,80),
+    result:RES[x.result]?x.result:"P", note:String(x.note||"").slice(0,120)})):[];
+  return {id, name:String(d.name||id).slice(0,60), order:Number(d.order)||999, createdAt:Number(d.createdAt)||0,
+    aliases:Array.isArray(d.aliases)?d.aliases.map(a=>String(a).slice(0,60)).filter(Boolean):[], fights};
+}
+function statsOf(f){
+  const fs=[...f.fights].sort((a,b)=>a.event-b.event);
+  let w=0,l=0,d=0,p=0; fs.forEach(x=>{if(x.result==="W")w++;else if(x.result==="L")l++;else if(x.result==="D")d++;else p++;});
+  const done=fs.filter(x=>x.result!=="P"), total=done.length, pct=total?w/total:0;
+  let streak=0,type=null; for(let i=done.length-1;i>=0;i--){const r=done[i].result; if(type===null){type=r;streak=1;} else if(r===type) streak++; else break;}
+  return {w,l,d,p,total,pct,streak,streakType:type,count:fs.length,debut:fs.length?fs[0].event:null,last:fs.length?fs[fs.length-1].event:null,rec:`${w}-${l}-${d}`};
+}
+function index(){
+  const m=new Map();
+  state.fighters.forEach(f=>m.set(norm(f.name),f));
+  state.fighters.forEach(f=>f.aliases.forEach(a=>{const k=norm(a); if(!m.has(k)) m.set(k,f);}));
+  return m;
+}
+function maxEvent(){let m=0; state.fighters.forEach(f=>f.fights.forEach(x=>{if(x.event>m)m=x.event;})); return m;}
+function byRecord(a,b){return b.s.w-a.s.w || a.s.l-b.s.l || b.s.d-a.s.d || a.f.name.localeCompare(b.f.name,"sk");}
+function ranked(){return state.fighters.map(f=>({f,s:statsOf(f)})).sort(byRecord);}
+function gradFor(s){ if(!s.total) return "tint t-neutral"; if(s.pct>=.75) return "tint t-win"; if(s.pct>=.5) return "tint t-gold"; return "tint t-loss"; }
+function glowFor(s){ if(!s.total) return "transparent"; if(s.pct>=.75) return "rgba(56,201,91,.2)"; if(s.pct>=.5) return "rgba(206,185,118,.18)"; return "rgba(255,75,58,.16)"; }
+function plate(name,tag,act){
+  const inner=`${tag?`<span class="tag">${esc(tag)}</span>`:""}<span class="box">${esc(name)}</span>`;
+  return act?`<button type="button" class="plate" data-act="open" data-id="${esc(act)}">${inner}</button>`:`<span class="plate">${inner}</span>`;
+}
+
+/* ---------- db ---------- */
+function queue(id,fn){const prev=chains.get(id)||Promise.resolve(); const next=prev.catch(()=>{}).then(fn); chains.set(id,next); return next;}
+function writeErr(e){
+  const st=e&&e.status;
+  if(st===401){ setKey(""); state.canWrite=false; render(); toast("Heslo nesedí alebo prihlásenie vypršalo. Prihlás sa znova."); }
+  else if(st===503) toast("Úložisko nie je pripojené, zmeny sa nedajú uložiť. Pozri README.");
+  else toast("Zmenu sa nepodarilo uložiť. Skús to o chvíľu znova.");
+}
+async function putFighter(f,patch){
+  const doc={...docOf(f),...patch};
+  const prev=state.fighters.slice();
+  const clean=sanitize(doc.id,doc), i=state.fighters.findIndex(x=>x.id===doc.id);
+  if(i>=0) state.fighters[i]=clean; else state.fighters.push(clean);
+  render();
+  try{ const r=await queue(doc.id,()=>api("PUT",{fighter:doc})); if(r&&r.fighters) setFighters(r.fighters); render(); return true; }
+  catch(e){ state.fighters=prev; render(); writeErr(e); return false; }
+}
+async function removeFighter(f){
+  const prev=state.fighters.slice();
+  state.fighters=state.fighters.filter(x=>x.id!==f.id); render();
+  try{ const r=await queue(f.id,()=>api("DELETE",null,"?id="+encodeURIComponent(f.id))); if(r&&r.fighters) setFighters(r.fighters); render(); return true; }
+  catch(e){ state.fighters=prev; render(); writeErr(e); return false; }
+}
+function saveFights(f,fights){ return putFighter(f,{fights}); }
+
+/* ---------- render: summary ---------- */
+function renderStats(){
+  const el=$("#stats");
+  if(!state.loaded){el.innerHTML='<div class="stat"><span class="n num skel">··</span><span class="tag">Načítavam</span></div>';return;}
+  const all=state.fighters.map(statsOf);
+  const fights=all.reduce((a,s)=>a+s.count,0);
+  const unbeaten=all.filter(s=>s.total>0&&s.l===0).length;
+  const items=[[state.fighters.length,"Zápasníci",1],[fights,"Zápasy"],[maxEvent(),"Turnaje"],[unbeaten,"Bez prehry"]];
+  el.innerHTML=items.map(([n,t,hl])=>`<div class="stat${hl?" hl":""}"><span class="n num">${n}</span><span class="tag">${t}</span></div>`).join("");
+}
+function renderTimeline(){
+  const el=$("#timeline"), max=maxEvent();
+  if(!state.loaded||!max){el.innerHTML=`<div class="tcol"><div class="stack"></div><span class="lbl">${state.loaded?"Zatiaľ žiadne zápasy":"Načítavam…"}</span></div>`;return;}
+  let html="";
+  for(let e=1;e<=max;e++){
+    const res=[]; state.fighters.forEach(f=>f.fights.forEach(x=>{if(x.event===e)res.push(x.result);}));
+    const order={W:0,D:1,P:2,L:3}; res.sort((a,b)=>order[a]-order[b]);
+    html+=`<button type="button" class="tcol${e===max?" is-latest":""}" data-act="goto-event" data-ev="${e}" aria-label="FNC ${e}, ${res.length} zápasov">
+      <span class="stack">${res.length?res.map(r=>`<i class="dot ${RES[r].c}"></i>`).join(""):'<i class="dot e"></i>'}</span>
+      <span class="lbl">FNC ${e}</span></button>`;
+  }
+  el.innerHTML=html;
+}
+function renderPending(){
+  const el=$("#pending");
+  const list=[]; state.fighters.forEach(f=>f.fights.forEach(x=>{if(x.result==="P")list.push({f,x});}));
+  list.sort((a,b)=>b.x.event-a.x.event);
+  el.innerHTML=`<img class="logo-w" src="${LOGO_WHITE}" alt=""><h3>Čakajú na výsledok</h3>
+    <div class="big num">${state.loaded?list.length:"·"}<small>${plural(list.length,"zápas","zápasy","zápasov")}</small></div>
+    ${list.length?`<ul class="pend-list">${list.slice(0,4).map(({f,x})=>`<li><span><button type="button" class="lnk" data-act="open" data-id="${esc(f.id)}">${esc(f.name)}</button> vs. ${esc(x.opponent)}</span><span class="ev">FNC ${x.event}</span></li>`).join("")}</ul>`
+      :`<p class="empty">${state.loaded?"Všetky výsledky sú zapísané.":""}</p>`}`;
+}
+function renderHighlights(){
+  const el=$("#highlights");
+  const r=ranked().filter(x=>x.s.total>0);
+  if(!state.loaded||!r.length){el.innerHTML=["t-gold","t-win","t-neutral"].map(g=>`<div class="gcard tint ${g}"><span class="lab">${state.loaded?"Zatiaľ bez dát":"Načítavam…"}</span><span class="big num">··</span></div>`).join("");return;}
+  const top=r[0];
+  const st=r.filter(x=>x.s.streakType==="W").sort((a,b)=>b.s.streak-a.s.streak)[0];
+  const unb=r.filter(x=>x.s.l===0);
+  el.innerHTML=`
+  <div class="gcard tint t-gold"><span class="lab">Najlepšia bilancia</span>
+    <span class="big num">${top.s.rec}</span>
+    ${plate(top.f.name,"#1 v rebríčku",top.f.id)}
+    <span class="sub">${pctTxt(top.s.pct)} výhier z ${top.s.total} zápasov</span></div>
+  <div class="gcard tint t-win"><span class="lab">Najdlhšia aktuálna séria výhier</span>
+    <span class="big num">${st?st.s.streak:0}</span>
+    ${st?`${plate(st.f.name,"výhier v rade",st.f.id)}<span class="sub">posledná na FNC ${st.s.last}</span>`:`<span class="sub">Nikto nie je na víťaznej sérii</span>`}
+    <div class="ruler" aria-hidden="true"><i style="left:${st?Math.min(92,8+st.s.streak*9):8}%"></i></div></div>
+  <div class="gcard tint t-neutral"><span class="lab">Bez jedinej prehry</span>
+    <span class="big num">${unb.length}</span>
+    <div class="chips-row">${unb.map(x=>`<button type="button" data-act="open" data-id="${esc(x.f.id)}">${esc(x.f.name)}<span class="r">${x.s.rec}</span></button>`).join("")||"<span>Zatiaľ nikto</span>"}</div></div>`;
+}
+
+/* ---------- render: roster ---------- */
+function stripHTML(f,max){
+  let h="";
+  for(let e=1;e<=max;e++){
+    const xs=f.fights.filter(x=>x.event===e);
+    const tip=xs.length?xs.map(x=>`FNC ${e}: ${x.opponent} – ${RES[x.result].label}`).join(", "):`FNC ${e}: nezápasil`;
+    h+=`<span class="slot" title="${esc(tip)}">${xs.length?xs.map(x=>`<i class="dot ${RES[x.result].c}"></i>`).join(""):'<i class="dot e"></i>'}</span>`;
+  }
+  return h;
+}
+function renderRoster(){
+  const el=$("#roster");
+  if(!state.loaded){el.innerHTML='<div class="empty-state">Načítavam zápasníkov…</div>';return;}
+  const max=Math.max(1,maxEvent());
+  const rankMap=new Map(ranked().filter(x=>x.s.total>0).map((x,i)=>[x.f.id,i+1]));
+  let list=state.fighters.map(f=>({f,s:statsOf(f)}));
+  const q=norm(state.q);
+  if(q) list=list.filter(({f})=>norm(f.name).includes(q)||f.aliases.some(a=>norm(a).includes(q))||f.fights.some(x=>norm(x.opponent).includes(q)));
+  const sorters={record:byRecord,
+    pct:(a,b)=>b.s.pct-a.s.pct||b.s.total-a.s.total||byRecord(a,b),
+    count:(a,b)=>b.s.count-a.s.count||byRecord(a,b),
+    name:(a,b)=>a.f.name.localeCompare(b.f.name,"sk")};
+  list.sort(sorters[state.sort]);
+  $("#roster-count").textContent=q?`${list.length} z ${state.fighters.length} zápasníkov`:`${state.fighters.length} zápasníkov · bodky FNC 1 až ${max}`;
+  if(!state.fighters.length){el.innerHTML=`<div class="empty-state">Roster je prázdny.${state.canWrite&&state.dbOk?' Pridaj prvého zápasníka tlačidlom „Nový zápasník“.':""}</div>`;return;}
+  if(!list.length){el.innerHTML=`<div class="empty-state">Nikto nezodpovedá hľadaniu „${esc(state.q)}“.</div>`;return;}
+  el.innerHTML=list.map(({f,s})=>{
+    const t=s.total||1, rk=rankMap.get(f.id);
+    return `<button type="button" class="panel fcard" data-act="open" data-id="${esc(f.id)}" style="--glow:${glowFor(s)}">
+      <div class="fc-top">${plate(f.name,rk?"#"+rk:"bez výsledku")}
+        <span class="rec num${s.total&&s.l===0?" hot":""}" aria-label="Skóre ${s.w} výhier, ${s.l} prehier, ${s.d} remíz">${s.rec}<small>V-P-R</small></span></div>
+      <div class="strip" style="--cols:${max}">${stripHTML(f,max)}</div>
+      <div class="bar-r" aria-hidden="true"><i class="bw" style="width:${s.w/t*100}%"></i><i class="bd" style="width:${s.d/t*100}%"></i><i class="bl" style="width:${s.l/t*100}%"></i></div>
+      <div class="fc-meta"><span>${s.count} ${plural(s.count,"zápas","zápasy","zápasov")}${s.p?` · ${s.p} bez výsledku`:""}</span><span>${s.total?pctTxt(s.pct)+" výhier":"–"}</span></div>
+    </button>`;}).join("");
+}
+
+/* ---------- render: events ---------- */
+function bouts(e,idx){
+  const map=new Map(), loose=[];
+  state.fighters.forEach(f=>f.fights.forEach(x=>{
+    if(x.event!==e) return;
+    const o=idx.get(norm(x.opponent));
+    if(o&&o.id!==f.id){
+      const key=[f.id,o.id].sort().join("|");
+      let b=map.get(key);
+      if(!b){b={a:{f,res:x.result,note:x.note},bf:o,b:null}; map.set(key,b);}
+      else if(!b.b&&b.a.f.id!==f.id){b.b={f,res:x.result,note:x.note};}
+    } else loose.push({f,x});
+  }));
+  const list=[...map.values()].map(b=>({a:b.a,b:b.b||{f:b.bf,res:INV[b.a.res]},note:b.a.note||(b.b&&b.b.note)}));
+  const present=new Set(); list.forEach(b=>{present.add(b.a.f.id);present.add(b.b.f.id);});
+  loose.forEach(({f,x})=>{ if(present.has(f.id)) return; list.push({a:{f,res:x.result},b:{name:x.opponent,res:INV[x.result]},note:x.note}); });
+  return list;
+}
+function sideHTML(s,right){
+  const cls=s.res==="W"?" win":s.res==="L"?" lose":"";
+  const nm=s.f?`<button type="button" class="lnk nm${cls}" data-act="open" data-id="${esc(s.f.id)}">${esc(s.f.name)}</button>`:`<span class="nm ext">${esc(s.name)}</span>`;
+  const dot=`<i class="dot ${RES[s.res].c}" title="${RES[s.res].label}"></i>`;
+  return `<span class="side${right?" r":""}">${right?nm+dot:dot+nm}</span>`;
+}
+function renderEvents(){
+  const el=$("#events"), max=maxEvent(), idx=index();
+  if(!state.loaded){el.innerHTML='<div class="empty-state">Načítavam…</div>';return;}
+  if(!max){el.innerHTML='<div class="empty-state">Zatiaľ nie sú zapísané žiadne zápasy.</div>';return;}
+  let h="";
+  for(let e=max;e>=1;e--){
+    const bs=bouts(e,idx);
+    h+=`<article class="panel ecard" id="ev-${e}"><header><span class="num">FNC ${e}</span><span>${bs.length?`${bs.length} ${plural(bs.length,"zápas","zápasy","zápasov")} našich zápasníkov`:"bez našich zápasníkov"}</span></header>
+      ${bs.length?`<ul class="bouts">${bs.map(b=>`<li class="bout">${sideHTML(b.a)}<span class="vs">vs</span>${sideHTML(b.b,true)}${b.note?`<span class="note">${esc(b.note)}</span>`:""}</li>`).join("")}</ul>`:""}</article>`;
+  }
+  el.innerHTML=h;
+}
+
+/* ---------- render: drawer ---------- */
+function formHTML(f){
+  const fm=state.form, d=fm.draft;
+  const opts=[...new Set(state.fighters.filter(x=>x.id!==f.id).map(x=>x.name))].sort((a,b)=>a.localeCompare(b,"sk"));
+  return `<form class="fform" id="fight-form" autocomplete="off">
+    <div class="frow">
+      <div class="field"><label for="ff-event">Turnaj FNC</label><input id="ff-event" name="event" type="number" min="1" step="1" inputmode="numeric" required value="${esc(d.event)}"></div>
+      <div class="field"><label for="ff-opp">Súper</label><input id="ff-opp" name="opponent" list="ff-opps" required maxlength="80" placeholder="Meno súpera" value="${esc(d.opponent)}">
+        <datalist id="ff-opps">${opts.map(o=>`<option value="${esc(o)}"></option>`).join("")}</datalist></div>
+    </div>
+    <div class="field"><span class="flabel" id="ff-res-l">Výsledok pre ${esc(f.name)}</span>
+      <div class="resseg" role="radiogroup" aria-labelledby="ff-res-l">${["W","L","D","P"].map(k=>`<input type="radio" name="result" id="ff-r-${k}" value="${k}"${d.result===k?" checked":""}><label for="ff-r-${k}"><i class="dot ${RES[k].c}"></i>${k==="P"?"Čaká":RES[k].label}</label>`).join("")}</div></div>
+    <div class="field"><label for="ff-note">Poznámka (nepovinné)</label><input id="ff-note" name="note" maxlength="120" placeholder="napr. handicap zápas 1 vs 2" value="${esc(d.note)}"></div>
+    <div class="factions"><button type="button" class="btn-line" data-act="cancel-form">Zrušiť</button><button type="submit" class="btn-gold sm">${fm.mode==="edit"?"Uložiť zmeny":"Pridať zápas"}</button></div>
+  </form>`;
+}
+function renderDrawer(force){
+  const dr=$("#drawer"), scrim=$("#scrim");
+  const f=state.fighters.find(x=>x.id===state.openId);
+  if(!f){ dr.classList.remove("on"); scrim.classList.remove("on"); dr.setAttribute("aria-hidden","true"); state.lastDrawerSig=""; return; }
+  const sig=JSON.stringify([f,state.form&&{m:state.form.mode,id:state.form.fightId},state.armed,state.canWrite]);
+  if(!force&&sig===state.lastDrawerSig&&dr.classList.contains("on")) return;
+  state.lastDrawerSig=sig;
+  const s=statsOf(f), idx=index(), w=state.canWrite&&state.dbOk;
+  const rk=ranked().filter(x=>x.s.total>0).findIndex(x=>x.f.id===f.id);
+  const fights=[...f.fights].sort((a,b)=>b.event-a.event||a.id.localeCompare(b.id));
+  const streakTxt=s.streakType?`${s.streak}× ${s.streakType==="W"?"výhra":s.streakType==="L"?"prehra":"remíza"} v rade`:"bez odzápasených duelov";
+  const scroll=dr.querySelector(".dr-scroll"); const st=scroll?scroll.scrollTop:0;
+  dr.innerHTML=`<div class="dr-scroll">
+    <div class="dr-head"><div>${plate(f.name,rk>=0?`#${rk+1} v rebríčku FNC`:"Zápasník FNC")}
+      ${f.aliases.length?`<div class="aliases" title="Iné mená, pod ktorými sa objavuje v zápasoch">${f.aliases.map(a=>`<span>aj ako ${esc(a)}</span>`).join("")}</div>`:""}</div>
+      <button type="button" class="x-btn" data-act="close" aria-label="Zavrieť detail">${ICON.x}</button></div>
+    <div class="dr-hero ${gradFor(s)}"><span class="lab">Skóre V-P-R</span><span class="big num">${s.rec}</span>
+      <span class="sub">${s.total?pctTxt(s.pct)+" výhier · "+streakTxt:"Zatiaľ bez výsledku"}</span>
+      <div class="ruler" aria-hidden="true"><i style="left:${8+s.pct*84}%"></i></div></div>
+    <div class="minis">
+      <div class="mini"><span>Zápasy</span><b>${s.count}</b></div>
+      <div class="mini"><span>Debut</span><b>${s.debut?"FNC "+s.debut:"–"}</b></div>
+      <div class="mini"><span>Posledný</span><b>${s.last?"FNC "+s.last:"–"}</b></div>
+      <div class="mini"><span>Bez výsl.</span><b>${s.p}</b></div>
+    </div>
+    <div class="sec"><h3>Zápasy</h3>${w&&!(state.form&&state.form.mode==="add")?`<button type="button" class="btn-gold sm" data-act="add-fight">${ICON.plus}Pridať zápas</button>`:""}</div>
+    ${w&&state.form&&state.form.mode==="add"?formHTML(f):""}
+    <ol class="fights">${fights.length?fights.map(x=>{
+      if(w&&state.form&&state.form.mode==="edit"&&state.form.fightId===x.id) return `<li style="list-style:none">${formHTML(f)}</li>`;
+      const o=idx.get(norm(x.opponent)); const os=o&&o.id!==f.id?statsOf(o):null;
+      const armed=state.armed==="fight:"+x.id;
+      return `<li class="fight r-${RES[x.result].c}">
+        <span class="fnc"><small>FNC</small><b>${x.event}</b></span>
+        <span class="opp">${os?`<button type="button" class="lnk nm" data-act="open" data-id="${esc(o.id)}">${esc(x.opponent)}<span class="rk">${os.rec}</span></button>`:`<span class="nm">${esc(x.opponent)}</span>`}${x.note?`<em>${esc(x.note)}</em>`:""}</span>
+        <span class="res ${RES[x.result].c}"><i class="dot ${RES[x.result].c}"></i>${RES[x.result].label}</span>
+        ${w?`<span class="row-act"><button type="button" data-act="edit-fight" data-fid="${esc(x.id)}" aria-label="Upraviť zápas">${ICON.edit}</button><button type="button" class="${armed?"armed":""}" data-act="del-fight" data-fid="${esc(x.id)}" aria-label="${armed?"Potvrdiť zmazanie":"Zmazať zápas"}" title="${armed?"Klikni znova pre zmazanie":"Zmazať"}">${ICON.trash}</button></span>`:"<span></span>"}
+      </li>`;}).join(""):`<li class="empty-state" style="list-style:none">Zatiaľ žiadny zápas.</li>`}</ol>
+    ${w?`<div class="dr-foot"><button type="button" class="btn-line" data-act="rename">Premenovať</button><button type="button" class="btn-line" data-act="aliases">Iné mená</button>
+      <button type="button" class="btn-line danger${state.armed==="fighter"?" armed":""}" data-act="del-fighter">${state.armed==="fighter"?"Naozaj zmazať?":"Zmazať zápasníka"}</button></div>`:""}
+  </div>`;
+  const ns=dr.querySelector(".dr-scroll"); if(ns) ns.scrollTop=st;
+  dr.classList.add("on"); scrim.classList.add("on"); dr.setAttribute("aria-hidden","false");
+}
+
+function renderNotice(){
+  const n=$("#notice"); let msg="",warn=false;
+  if(state.err){msg="Dáta sa nepodarilo načítať. Obnov stránku.";warn=true;}
+  else if(state.offline){msg="Server neodpovedá, zobrazujem uložené dáta zo súboru. Úpravy teraz nie sú dostupné.";warn=true;}
+  else if(state.loaded&&state.dbOk===false){msg="Úložisko nie je pripojené, dáta sú len na čítanie. Návod je v README.";warn=true;}
+  else if(state.loaded&&!state.editable&&state.dbOk){msg="Úpravy sú vypnuté: na serveri chýba premenná ADMIN_PASSWORD.";}
+  n.className="notice"+(warn?" warn":""); n.innerHTML=msg?`<span>${esc(msg)}</span>`:"";
+  $("#add-fighter").hidden=!(state.dbOk&&state.canWrite&&state.loaded);
+  const ab=$("#auth-btn"); ab.hidden=!(state.loaded&&state.dbOk&&state.editable); ab.textContent=state.canWrite?"Odhlásiť":"Prihlásiť";
+}
+function render(){
+  renderNotice(); renderStats(); renderTimeline(); renderHighlights();
+  $("#roster-view").hidden=state.view!=="roster"; $("#events-view").hidden=state.view!=="events";
+  $("#tab-roster").classList.toggle("on",state.view==="roster"); $("#tab-events").classList.toggle("on",state.view==="events");
+  $("#page-title").innerHTML=`<small>Fight Night Challenge · záznamy</small>${state.view==="roster"?"Zápasníci":"Turnaje"}`;
+  if(state.view==="roster") renderRoster(); else renderEvents();
+  renderDrawer();
+}
+
+/* ---------- modal ---------- */
+function modal({title,hint,label,value,submit,onSubmit,type}){
+  const m=$("#modal");
+  m.innerHTML=`<form class="mbox" id="mform" autocomplete="off"><h3>${esc(title)}</h3>${hint?`<p>${esc(hint)}</p>`:""}
+    <div class="field"><label for="m-in">${esc(label)}</label><input id="m-in" type="${type==="password"?"password":"text"}" maxlength="200" value="${esc(value||"")}" required${type==="password"?' autocomplete="current-password"':""}></div>
+    <div class="factions"><button type="button" class="btn-line" data-act="modal-close">Zrušiť</button><button class="btn-gold sm" type="submit">${esc(submit)}</button></div></form>`;
+  m.classList.add("on"); setTimeout(()=>{const i=$("#m-in"); i.focus(); i.select();},30);
+  $("#mform").addEventListener("submit",ev=>{ev.preventDefault(); const v=$("#m-in").value.trim(); closeModal(); onSubmit(v);});
+}
+function closeModal(){const m=$("#modal"); m.classList.remove("on"); m.innerHTML="";}
+
+/* ---------- actions ---------- */
+function openFighter(id){state.openId=id; state.form=null; state.armed=null; renderDrawer(true);}
+function startForm(mode,f,x){
+  state.armed=null;
+  state.form={mode,fightId:x?x.id:null,draft:x?{event:x.event,opponent:x.opponent,result:x.result,note:x.note}:{event:maxEvent()||1,opponent:"",result:"W",note:""}};
+  renderDrawer(true);
+  setTimeout(()=>{const i=$(mode==="add"?"#ff-opp":"#ff-event"); if(i) i.focus();},40);
+}
+document.addEventListener("input",e=>{
+  if(e.target.id==="q"){state.q=e.target.value; renderRoster(); return;}
+  if(state.form&&e.target.closest("#fight-form")){const d=state.form.draft, t=e.target;
+    if(t.name==="event")d.event=t.value; else if(t.name==="opponent")d.opponent=t.value; else if(t.name==="note")d.note=t.value; else if(t.name==="result")d.result=t.value;}
+});
+document.addEventListener("change",e=>{ if(state.form&&e.target.name==="result") state.form.draft.result=e.target.value; });
+document.addEventListener("submit",async e=>{
+  if(e.target.id!=="fight-form") return;
+  e.preventDefault();
+  const f=state.fighters.find(x=>x.id===state.openId); if(!f||!state.form) return;
+  const d=state.form.draft, ev=parseInt(d.event,10), opp=String(d.opponent).trim();
+  if(!ev||ev<1){toast("Zadaj číslo turnaja, napríklad 12.");return;}
+  if(!opp){toast("Doplň meno súpera.");return;}
+  const rec={id:state.form.fightId||rid(),event:ev,opponent:opp.slice(0,80),result:RES[d.result]?d.result:"W",note:String(d.note||"").trim().slice(0,120)};
+  const fights=state.form.mode==="edit"?f.fights.map(x=>x.id===rec.id?rec:x):[...f.fights,rec];
+  const wasEdit=state.form.mode==="edit";
+  state.form=null; renderDrawer(true);
+  if(await saveFights(f,fights)) toast(wasEdit?"Zápas upravený":`Zápas FNC ${ev} pridaný`);
+});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  if($("#modal").classList.contains("on")){closeModal();return;}
+  if(state.form){state.form=null;renderDrawer(true);return;}
+  if(state.openId){state.openId=null;renderDrawer();}
+});
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const act=b.dataset.act;
+  const f=state.fighters.find(x=>x.id===state.openId);
+  if(act!=="del-fight"&&act!=="del-fighter"&&state.armed){state.armed=null; if(f) renderDrawer(true);}
+  switch(act){
+    case "open": openFighter(b.dataset.id); break;
+    case "close": state.openId=null; state.form=null; state.armed=null; renderDrawer(); break;
+    case "view": state.view=b.dataset.view; render(); break;
+    case "goto-event": state.view="events"; state.openId=null; render(); setTimeout(()=>{const t=document.getElementById("ev-"+b.dataset.ev); if(t) t.scrollIntoView({behavior:"smooth",block:"center"});},30); break;
+    case "sort": state.sort=b.dataset.sort; document.querySelectorAll('[data-act="sort"]').forEach(x=>x.classList.toggle("on",x===b)); renderRoster(); break;
+    case "add-fight": if(f) startForm("add",f); break;
+    case "edit-fight": if(f){const x=f.fights.find(y=>y.id===b.dataset.fid); if(x) startForm("edit",f,x);} break;
+    case "cancel-form": state.form=null; renderDrawer(true); break;
+    case "del-fight": {
+      if(!f) break; const key="fight:"+b.dataset.fid;
+      if(state.armed!==key){state.armed=key; renderDrawer(true); break;}
+      state.armed=null; const fights=f.fights.filter(x=>x.id!==b.dataset.fid); renderDrawer(true);
+      if(await saveFights(f,fights)) toast("Zápas zmazaný"); break; }
+    case "del-fighter": {
+      if(!f) break;
+      if(state.armed!=="fighter"){state.armed="fighter"; renderDrawer(true); break;}
+      state.armed=null; state.openId=null; renderDrawer();
+      if(await removeFighter(f)) toast(`${f.name} zmazaný`); break; }
+    case "rename": if(f) modal({title:"Premenovať zápasníka",label:"Meno",value:f.name,submit:"Uložiť",onSubmit:async v=>{
+      if(!v||v===f.name) return; if(await putFighter(f,{name:v.slice(0,60)})) toast("Meno uložené"); }}); break;
+    case "aliases": if(f) modal({title:"Iné mená",hint:"Ak sa zápasník v zápasoch objavuje aj pod iným menom, zápasy sa prepoja. Oddeľ čiarkou.",label:"Iné mená",value:f.aliases.join(", "),submit:"Uložiť",onSubmit:async v=>{
+      const al=[...new Set(v.split(",").map(s=>s.trim()).filter(Boolean))].slice(0,10);
+      if(await putFighter(f,{aliases:al})) toast("Uložené"); }}); break;
+    case "add-fighter": modal({title:"Nový zápasník",label:"Meno alebo prezývka",value:"",submit:"Pridať",onSubmit:async v=>{
+      if(!v) return;
+      if(index().has(norm(v))){toast(`${v} už v rosteri je.`);return;}
+      let id=slug(v); if(state.fighters.some(x=>x.id===id)) id+="-"+rid();
+      const order=state.fighters.reduce((m,x)=>Math.max(m,x.order<999?x.order:0),0)+1;
+      if(await putFighter({id,name:v,order,aliases:[],fights:[]},{name:v.slice(0,60),createdAt:Date.now()})){ toast(`${v} pridaný`); openFighter(id);} }}); break;
+    case "auth":
+      if(state.canWrite){ setKey(""); state.canWrite=false; state.form=null; render(); renderDrawer(true); toast("Odhlásený"); break; }
+      modal({title:"Prihlásenie",hint:"Na pridávanie a úpravu zápasov zadaj heslo tímu.",label:"Heslo",value:"",type:"password",submit:"Prihlásiť",onSubmit:async v=>{
+        if(!v) return; const old=adminKey; setKey(v);
+        try{ await api("POST",null,"?action=login"); state.canWrite=true; render(); renderDrawer(true); toast("Prihlásený, môžeš upravovať"); }
+        catch(e){ setKey(old); toast(e.status===401?"Nesprávne heslo.":"Prihlásenie zlyhalo, skús znova."); } }}); break;
+    case "modal-close": closeModal(); break;
+  }
+});
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal") closeModal();});
+
+/* ---------- grain + init ---------- */
+(function grain(){try{const c=document.createElement("canvas");c.width=c.height=160;const g=c.getContext("2d");const im=g.createImageData(160,160);
+  for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255|0;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=46;}
+  g.putImageData(im,0,0);document.documentElement.style.setProperty("--grain",`url(${c.toDataURL()})`);}catch(e){}})();
+
+render();
+async function load(initial){
+  try{
+    const j=await api("GET");
+    state.editable=!!j.editable; state.dbOk=!!j.storage; state.offline=false; state.err=null;
+    setFighters(j.fighters);
+  }catch(e){
+    if(initial){
+      try{ const r=await fetch("data/fighters.json",{cache:"no-store"}); const j=await r.json(); setFighters(j.fighters); state.offline=true; state.dbOk=false; }
+      catch(e2){ state.err=true; }
+    }
+  }
+  state.loaded=true;
+  if(state.openId&&!state.fighters.some(x=>x.id===state.openId)){state.openId=null;state.form=null;}
+  render();
+}
+(async function init(){
+  await load(true);
+  if(adminKey&&state.dbOk&&state.editable){
+    try{ await api("POST",null,"?action=login"); state.canWrite=true; }catch(e){ if(e.status===401) setKey(""); }
+    render();
+  }
+  // refresh every 30 s so teammates see each other's changes; paused while a form or dialog is open
+  setInterval(()=>{ if(document.visibilityState==="visible"&&!state.form&&!state.offline&&!$("#modal").classList.contains("on")) load(false); },30000);
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&!state.form&&!state.offline) load(false); });
+})();
+})();
+</script>
+</body>
+</html>

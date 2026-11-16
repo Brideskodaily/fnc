@@ -1,0 +1,667 @@
+{
+  "version": 1,
+  "exportedAt": "2026-11-16",
+  "fighters": [
+    {
+      "id": "cverna",
+      "name": "Cverna",
+      "order": 1,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 1,
+          "opponent": "Pirát",
+          "result": "D",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 2,
+          "opponent": "Kareš",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 3,
+          "opponent": "Zátorský",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 5,
+          "opponent": "Kiry",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s05",
+          "event": 8,
+          "opponent": "2 súperi",
+          "result": "L",
+          "note": "Handicap zápas 1 vs 2"
+        },
+        {
+          "id": "s06",
+          "event": 9,
+          "opponent": "Fajk",
+          "result": "L",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "cepo",
+      "name": "Čepo",
+      "order": 2,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 1,
+          "opponent": "Kincl",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 2,
+          "opponent": "Jevický",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 3,
+          "opponent": "Vičić",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 6,
+          "opponent": "Bartl",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "fajk",
+      "name": "Fajk",
+      "order": 3,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 8,
+          "opponent": "Wach",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 9,
+          "opponent": "Cverna",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "flexking",
+      "name": "Flexking",
+      "order": 4,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 1,
+          "opponent": "Čis T",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 2,
+          "opponent": "Refew",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 3,
+          "opponent": "Barón",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 5,
+          "opponent": "Štrba",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s05",
+          "event": 6,
+          "opponent": "Strýco Filip",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s06",
+          "event": 7,
+          "opponent": "Král Pablo",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s07",
+          "event": 10,
+          "opponent": "Zvara",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s08",
+          "event": 11,
+          "opponent": "Vybavenko",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "fuco",
+      "name": "Fučo",
+      "order": 5,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 5,
+          "opponent": "Pali Hari",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 6,
+          "opponent": "Strausz",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 7,
+          "opponent": "Dunajčan",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 10,
+          "opponent": "Dunajčan",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "kiry",
+      "name": "Kiry",
+      "order": 6,
+      "aliases": [
+        "Király",
+        "Matej Király"
+      ],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 2,
+          "opponent": "Pirát",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 3,
+          "opponent": "Vaľko",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 5,
+          "opponent": "Cverna",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 7,
+          "opponent": "2 súperi",
+          "result": "L",
+          "note": "Handicap zápas 1 vs 2"
+        },
+        {
+          "id": "s05",
+          "event": 10,
+          "opponent": "Tlkanec",
+          "result": "L",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "mospan",
+      "name": "Mošpan",
+      "order": 7,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 4,
+          "opponent": "Martanovič",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 5,
+          "opponent": "Murcin",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 6,
+          "opponent": "Dynamic",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 7,
+          "opponent": "Király",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s05",
+          "event": 8,
+          "opponent": "Blahovský",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s06",
+          "event": 10,
+          "opponent": "Murcin",
+          "result": "L",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "murcin",
+      "name": "Murcin",
+      "order": 8,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 4,
+          "opponent": "Lipkovics",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 5,
+          "opponent": "Mošpan",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 6,
+          "opponent": "Pali Hari",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 7,
+          "opponent": "Matej Király",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s05",
+          "event": 9,
+          "opponent": "Enžl",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s06",
+          "event": 10,
+          "opponent": "Mošpan",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "pirat",
+      "name": "Pirát",
+      "order": 9,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 1,
+          "opponent": "Cverna",
+          "result": "D",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 2,
+          "opponent": "Kiry",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 11,
+          "opponent": "Tlkanec",
+          "result": "L",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "sulik",
+      "name": "Sulík",
+      "order": 10,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 6,
+          "opponent": "Vlček",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 7,
+          "opponent": "Palkovič",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 10,
+          "opponent": "Farkaš",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 11,
+          "opponent": "Lakatoš",
+          "result": "D",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "tlkanec",
+      "name": "Tlkanec",
+      "order": 11,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 3,
+          "opponent": "Plesník",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 5,
+          "opponent": "Rácz",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 6,
+          "opponent": "3 súperi",
+          "result": "D",
+          "note": "Handicap zápas 1 vs 3"
+        },
+        {
+          "id": "s04",
+          "event": 7,
+          "opponent": "3 súperi",
+          "result": "W",
+          "note": "Handicap zápas 1 vs 3"
+        },
+        {
+          "id": "s05",
+          "event": 10,
+          "opponent": "Király",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s06",
+          "event": 11,
+          "opponent": "Pirát",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "tresor",
+      "name": "Tresor",
+      "order": 12,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 3,
+          "opponent": "Valihora",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 5,
+          "opponent": "Bergi",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "attila",
+      "name": "Attila",
+      "order": 13,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 1,
+          "opponent": "Kincl",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 2,
+          "opponent": "Newton",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 3,
+          "opponent": "Spicely",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 11,
+          "opponent": "Spejbl",
+          "result": "W",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "rytmus",
+      "name": "Rytmus",
+      "order": 14,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 1,
+          "opponent": "Boráros",
+          "result": "L",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "misalko",
+      "name": "Mišalko",
+      "order": 15,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 3,
+          "opponent": "Zold",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 4,
+          "opponent": "Hačko",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 6,
+          "opponent": "Zátorský",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s04",
+          "event": 7,
+          "opponent": "Ligda",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s05",
+          "event": 8,
+          "opponent": "Cverna",
+          "result": "W",
+          "note": "Handicap zápas 2 vs 1"
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "samir",
+      "name": "Samir",
+      "order": 16,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 7,
+          "opponent": "Neštrák",
+          "result": "L",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 9,
+          "opponent": "Alimi",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s03",
+          "event": 11,
+          "opponent": "2 súperi",
+          "result": "P",
+          "note": "Handicap zápas 1 vs 2"
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "white-gypsy",
+      "name": "White Gypsy",
+      "order": 17,
+      "aliases": [],
+      "fights": [
+        {
+          "id": "s01",
+          "event": 10,
+          "opponent": "Murín",
+          "result": "W",
+          "note": ""
+        },
+        {
+          "id": "s02",
+          "event": 11,
+          "opponent": "Dekýš",
+          "result": "L",
+          "note": ""
+        }
+      ],
+      "createdAt": 1763300000000
+    },
+    {
+      "id": "zero",
+      "name": "Zero",
+      "order": 18,
+      "aliases": [],
+      "fights": [],
+      "createdAt": 1794841601934
+    }
+  ]
+}
